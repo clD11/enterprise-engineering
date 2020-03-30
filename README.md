@@ -44,6 +44,6 @@ Example - `http://localhost:8080/primes/10?algorithm=naive`
 
 #### Further Improvements ####
 - Add JWT for security if required
-- @EnableAsync methods for aggregation or long running processes
+- @EnableAsync for concurrent/parallel sieve
 - Data envelope for data and errors
 - HAETOS in response object not required
