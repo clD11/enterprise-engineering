@@ -1,0 +1,13 @@
+# java
+/bin/
+*/target/
+*.class
+
+# eclipse jazz
+.classpath
+.project
+.settings/
+
+# intelij
+.idea
+*.iml
