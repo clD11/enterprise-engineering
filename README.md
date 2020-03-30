@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/clD11/java-katas.svg?branch=master)](https://travis-ci.org/clD11/enterprise-engineering/)
+[![Build Status](https://travis-ci.org/clD11/enterprise-engineering.svg?branch=master)](https://travis-ci.org/clD11/enterprise-engineering/)
 
 Write a RESTful service which calculates and returns all the prime numbers up to and including a number provided.
 
