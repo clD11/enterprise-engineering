@@ -1,38 +1,49 @@
 [![Build Status](https://travis-ci.org/clD11/enterprise-engineering.svg?branch=master)](https://travis-ci.org/clD11/enterprise-engineering/)
 
-Write a RESTful service which calculates and returns all the prime numbers up to and including a number provided.
+## RESTful Prime Generator Service ##
 
-Example
-The REST call would look something like http://your.host.com/primes/10 and should return JSON content:
+_Calculates and returns all the prime numbers up to and including a number provided._
 
+#### Run ####
+- Clone repo
+- Run `EnterpriseEngineeringApplication`
+
+#### Example ####
+
+    http://localhost:8080/primes/10
+    
     {
-      "Initial":  10,    
-      "Primes": [2,3,5,7]
+      "initial":  10,    
+      "primes": [2,3,5,7]
     }
 
-### Requirements ###
-- The project must be written in Java 7 / 8.
-- The project must use Maven OR Gradle to build, test and run.
-- The project must have unit and integration tests.
-- The project must be runnable in that the service should be hosted in a container e.g. Tomcat, Jetty, Spring Boot etc.
-- You may use any frameworks or libraries for support e.g. Spring MVC, Apache CXF etc.
+| Http Method  | Endpoint           | Request                             | Response           |
+|:-------------|:-------------------|-------------------------------------|-------------------:|
+| GET          | api/v1/primes/{initial} | initial, algorithm (optional)  | JSON and XML       |
 
-The project must be accessible from Github.
-
-### Optional Extensions ###
-- Deploy the solution to a chosen platform that we can access.
-- Consider supporting varying return content types such as XML based, that should be configurable using the requested media type.
-- Consider ways to improve overall performance e.g. caching results, concurrent algorithm
-- Consider supporting multiple algorithms that can be switched based on optional parameters
-
-### Considerations ###
-- Springboot, Micronaut, JAX-RS
-- Add JWT for security if required
-- @EnableAsync methods for aggregation or long running processes
-- Api version - used this over content-negotiation as simpler
-- Data envelope data and errors
-- HAETOS in response object no required
-
-### Implementation ###
+#### Swagger ####
 - OpenAPI 3 Spec - http://localhost:8080/v3/api-docs/
 - Swagger UI - http://localhost:8080/swagger-ui.html
+
+#### Algorithms ####
+
+_Add to request as optional parameter, defaults to Eratosthenes_
+
+Example - `http://localhost:8080/primes/10?algorithm=naive`
+
+- Naive
+- Sieve of Eratosthenes
+ 
+#### Content Negotiation ####
+- Url parameter - mediaType=xml and mediaType=json
+- Accept header - { application/xml, application/json }
+
+#### Http Caching ####
+- Prime numbers are can be cached at http level
+- Cache-Control max-age 365 days
+
+#### Further Improvements ####
+- Add JWT for security if required
+- @EnableAsync methods for aggregation or long running processes
+- Data envelope for data and errors
+- HAETOS in response object not required
