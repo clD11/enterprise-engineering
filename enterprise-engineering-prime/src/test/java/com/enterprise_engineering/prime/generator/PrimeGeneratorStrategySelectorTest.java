@@ -17,7 +17,7 @@ class PrimeGeneratorStrategySelectorTest {
     }
 
     @Test
-    void shouldGetPrimeGeneratorAtkin() {
+    void shouldGetPrimeGeneratorNaive() {
         assertThat(primeGeneratorStrategySelector.getPrimeGenerator("naive"),
                 is(instanceOf(PrimeGeneratorNaive.class)));
     }
