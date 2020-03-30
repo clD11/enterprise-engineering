@@ -1,8 +1,8 @@
 [![Build Status](https://travis-ci.org/clD11/enterprise-engineering.svg?branch=master)](https://travis-ci.org/clD11/enterprise-engineering/)
 
-## RESTful Prime Generator Service ##
+## Prime Generator Service ##
 
-_Calculates and returns all the prime numbers up to and including a number provided._
+_REST service that calculates and returns all prime numbers up to and including a number provided._
 
 #### Run ####
 - Clone repo
