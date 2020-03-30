@@ -22,4 +22,10 @@ class PrimeGeneratorStrategySelectorTest {
                 is(instanceOf(PrimeGeneratorNaive.class)));
     }
 
+    @Test
+    void shouldGetPrimeGeneratorParallel() {
+        assertThat(primeGeneratorStrategySelector.getPrimeGenerator("parallel"),
+                is(instanceOf(PrimeGeneratorParallel.class)));
+    }
+
 }

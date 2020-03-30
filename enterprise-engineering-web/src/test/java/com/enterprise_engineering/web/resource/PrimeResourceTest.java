@@ -10,8 +10,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
 import java.util.List;
 
+import static com.enterprise_engineering.test_supprt.random.RandomUtil.*;
 import static com.enterprise_engineering.test_supprt.random.RandomUtil.nextInteger;
 import static com.enterprise_engineering.test_supprt.random.RandomUtil.randomString;
 import static com.enterprise_engineering.test_supprt.serialization.TestSupportSerializer.asJsonString;
@@ -29,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(value = PrimeResource.class)
 class PrimeResourceTest {
 
+    private static final List<String> ALGORITHMS = Collections.unmodifiableList(List.of("naive", "eratosthenes", "parallel"));
+
     @MockBean
     private PrimeResourceValidator primeResourceValidator;
 
@@ -39,75 +43,44 @@ class PrimeResourceTest {
     private MockMvc mockMvc;
 
     @Test
-    void shouldReturnJsonPrimeNumbersNoAlgorithm() throws Exception {
+    void shouldReturnJsonResultDefaultAlgorithm() throws Exception {
         var algorithm = "eratosthenes";
-        int initial = nextInteger();
-
-        var primes = List.of(nextInteger(), nextInteger());
-        PrimeResponseDto primeResponseDto = newPrimeResponseDtoBuilder()
-                .withInitial(initial)
-                .withPrimes(primes)
-                .build();
-
-        var primeGenerator = mock(PrimeGenerator.class);
-        when(primeGenerator.generatePrimes(initial)).thenReturn(primeResponseDto.getPrimes());
-
-        when(primeGeneratorStrategySelector.getPrimeGenerator(algorithm)).thenReturn(primeGenerator);
-        doNothing().when(primeResourceValidator).validate(initial);
-
+        var primeResponseDto = mockRequest(algorithm);
         var expected = asJsonString(primeResponseDto);
-
-        mockMvc.perform(get("/api/v1/primes/" + initial)
+        mockMvc.perform(get("/api/v1/primes/" + primeResponseDto.getInitial())
                 .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(expected)));
     }
 
     @Test
-    void shouldReturnXmlPrimeNumbersNoAlgorithm() throws Exception {
+    void shouldReturnXmlResultDefaultAlgorithm() throws Exception {
         var algorithm = "eratosthenes";
-        int initial = nextInteger();
-
-        var primes = List.of(nextInteger(), nextInteger());
-        PrimeResponseDto primeResponseDto = newPrimeResponseDtoBuilder()
-                .withInitial(initial)
-                .withPrimes(primes)
-                .build();
-
-        var primeGenerator = mock(PrimeGenerator.class);
-        when(primeGenerator.generatePrimes(initial)).thenReturn(primeResponseDto.getPrimes());
-
-        when(primeGeneratorStrategySelector.getPrimeGenerator(algorithm)).thenReturn(primeGenerator);
-        doNothing().when(primeResourceValidator).validate(initial);
-
+        var primeResponseDto = mockRequest(algorithm);
         var expected = asXmlString(primeResponseDto);
-
-        mockMvc.perform(get("/api/v1/primes/" + initial)
+        mockMvc.perform(get("/api/v1/primes/" + primeResponseDto.getInitial())
                 .accept(APPLICATION_XML))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(expected)));
     }
 
     @Test
-    void shouldReturnXmlPrimeNumbersNaive() throws Exception {
-        var algorithm = "naive";
-        int initial = nextInteger();
+    void shouldReturnJsonWithOptionalParameter() throws Exception {
+        var algorithm = nextRandomString(ALGORITHMS);
+        var primeResponseDto = mockRequest(algorithm);
+        var expected = asJsonString(primeResponseDto);
+        mockMvc.perform(get(String.format("/api/v1/primes/%d/?algorithm=%s", primeResponseDto.getInitial(), algorithm))
+                .accept(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString(expected)));
+    }
 
-        var primes = List.of(nextInteger(), nextInteger());
-        PrimeResponseDto primeResponseDto = newPrimeResponseDtoBuilder()
-                .withInitial(initial)
-                .withPrimes(primes)
-                .build();
-
-        var primeGenerator = mock(PrimeGenerator.class);
-        when(primeGenerator.generatePrimes(initial)).thenReturn(primeResponseDto.getPrimes());
-
-        when(primeGeneratorStrategySelector.getPrimeGenerator(algorithm)).thenReturn(primeGenerator);
-        doNothing().when(primeResourceValidator).validate(initial);
-
+    @Test
+    void shouldReturnXmlWithOptionalParameter() throws Exception {
+        var algorithm = nextRandomString(ALGORITHMS);
+        var primeResponseDto = mockRequest(algorithm);
         var expected = asXmlString(primeResponseDto);
-
-        mockMvc.perform(get(String.format("/api/v1/primes/%d/?algorithm=%s", initial, algorithm))
+        mockMvc.perform(get(String.format("/api/v1/primes/%d/?algorithm=%s", primeResponseDto.getInitial(), algorithm))
                 .accept(APPLICATION_XML))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString(expected)));
@@ -115,12 +88,8 @@ class PrimeResourceTest {
 
     @Test
     void shouldThrowValidationExceptionWhenNegativeNumber() throws Exception {
-        var name = randomString();
-        var message = randomString();
-
         var validationErrors = new ValidationError();
-        validationErrors.addError(name, message);
-
+        validationErrors.addError(randomString(), randomString());
         int initial = -1;
         doThrow(new ValidationException(validationErrors)).when(primeResourceValidator).validate(initial);
 
@@ -131,4 +100,18 @@ class PrimeResourceTest {
                 .andExpect(content().string(containsString(asJsonString(validationErrors))));
     }
 
+    private PrimeResponseDto mockRequest(String algorithm) {
+        PrimeResponseDto primeResponseDto = newPrimeResponseDtoBuilder()
+                .withInitial(nextInteger())
+                .withPrimes(List.of(nextInteger(), nextInteger()))
+                .build();
+
+        var primeGenerator = mock(PrimeGenerator.class);
+        when(primeGenerator.generatePrimes(primeResponseDto.getInitial())).thenReturn(primeResponseDto.getPrimes());
+
+        when(primeGeneratorStrategySelector.getPrimeGenerator(algorithm)).thenReturn(primeGenerator);
+        doNothing().when(primeResourceValidator).validate(primeResponseDto.getInitial());
+
+        return primeResponseDto;
+    }
 }

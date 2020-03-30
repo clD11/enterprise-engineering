@@ -9,8 +9,10 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 
+import java.util.Collections;
 import java.util.List;
 
+import static com.enterprise_engineering.test_supprt.random.RandomUtil.*;
 import static com.enterprise_engineering.test_supprt.serialization.TestSupportSerializer.*;
 import static com.enterprise_engineering.web.resource.PrimeResponseDto.PrimeResponseDtoBuilder.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,6 +21,8 @@ import static org.springframework.http.MediaType.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PrimeResourceIntegrationTest {
+
+    private static final List<String> ALGORITHMS = Collections.unmodifiableList(List.of("naive", "eratosthenes", "parallel"));
 
     @LocalServerPort
     private int port;
@@ -30,6 +34,15 @@ class PrimeResourceIntegrationTest {
     void shouldGetPrimeNumbers() throws JsonProcessingException {
         var primeResponseDto = buildPrimeResponseDto();
         String url = String.format("http://localhost:%d/api/v1/primes/10", port);
+        var expected = asJsonString(primeResponseDto);
+        var actual = testRestTemplate.getForEntity(url, String.class);
+        assertSuccess(actual, expected, APPLICATION_JSON);
+    }
+
+    @Test
+    void shouldGetPrimeNumbersWithOptionalParameter() throws JsonProcessingException {
+        var primeResponseDto = buildPrimeResponseDto();
+        String url = String.format("http://localhost:%d/api/v1/primes/10?algorithm=%s", port, nextRandomString(ALGORITHMS));
         var expected = asJsonString(primeResponseDto);
         var actual = testRestTemplate.getForEntity(url, String.class);
         assertSuccess(actual, expected, APPLICATION_JSON);
