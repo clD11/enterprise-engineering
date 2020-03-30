@@ -17,9 +17,9 @@ _REST service that calculates and returns all prime numbers up to and including 
       "primes": [2,3,5,7]
     }
 
-| Http Method  | Endpoint           | Request                             | Response           |
-|:-------------|:-------------------|-------------------------------------|-------------------:|
-| GET          | api/v1/primes/{initial} | initial, algorithm (optional)  | JSON and XML       |
+| Http Method  | Endpoint                | Request                              | Response     |
+|:-------------|:------------------------|:-------------------------------------|:-------------|
+| GET          | api/v1/primes/{initial} | initial, algorithm (optional)        | JSON and XML |
 
 #### Swagger ####
 - OpenAPI 3 Spec - http://localhost:8080/v3/api-docs/
