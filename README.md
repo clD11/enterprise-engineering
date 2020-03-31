@@ -42,8 +42,8 @@ Example - `http://localhost:8080/primes/10?algorithm=naive`
 - Prime numbers are can be cached at http level
 - Cache-Control max-age 365 days
 
-#### Further Improvements ####
+#### Consideration/Improvements ####
+- Add memoization to isPrime for optimization
 - Add JWT for security if required
-- @EnableAsync for concurrent/parallel sieve
 - Data envelope for data and errors
 - HAETOS in response object not required
