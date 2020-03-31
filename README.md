@@ -33,6 +33,7 @@ Example - `http://localhost:8080/primes/10?algorithm=naive`
 
 - Naive
 - Sieve of Eratosthenes
+- Parallel
  
 #### Content Negotiation ####
 - Url parameter - mediaType=xml and mediaType=json
